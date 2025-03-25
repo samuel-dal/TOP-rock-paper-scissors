@@ -1,5 +1,14 @@
+const container = document.querySelector('.container');
+const result = document.querySelector('.result');
+const bottomContainer = document.querySelector('.bottom-container');
+const midContainer = document.querySelector('.mid-container');
+const humanScoreUi = document.querySelector('.human-score-ui');
+const computerScoreUi = document.querySelector('.computer-score-ui');
+
 let humanScore = 0;
 let computerScore = 0;
+let finalScore = 5;
+
 
 const getComputerChoice = () => {
     let random = Math.floor(Math.random() * 3);
@@ -9,49 +18,81 @@ const getComputerChoice = () => {
         case 1:
             return 'paper';
         case 2:
-            return 'scissors';
+            return 'scissor';
     }
 }
 
-const getHumanChoice = () => {
-    let humanChoice = prompt('Choose: Rock, Paper, Scissors');
-    return humanChoice.toLowerCase();
-}
+const getHumanChoice = (humanChoice) => {
+    setTimeout(winnerResult, 1);
 
+    let computerChoice = getComputerChoice();
 
-const playGame = () => {
-
-    const playRound = (humanChoice, computerChoice) => {
-        if (humanChoice === computerChoice){
-            return console.log(`It's a tie, both a ${humanChoice}`)
-        }
-    
-        if (humanChoice === 'paper' && computerChoice === 'rock' || humanChoice === 'rock' && computerChoice === 'scissors' || humanChoice === 'scissors' && computerChoice === 'paper') {
-            humanScore++;
-            return console.log(`You win! ${humanChoice} beats ${computerChoice}`);
-        } else {
-            computerScore++;
-            return console.log(`You lose! ${computerChoice} beats ${humanChoice}`);
-        }
+    if (humanChoice === computerChoice) {
+        result.style.color = 'yellow';
+        return result.textContent = `It's a tie! Both chooses ${computerChoice}`;
     }
 
-    const humanSelection = getHumanChoice();
-    const computerSelection = getComputerChoice();
+    if (humanChoice === 'rock' && computerChoice === 'scissor' ||
+        humanChoice === 'paper' && computerChoice === 'rock' ||
+        humanChoice === 'scissor' && computerChoice === 'paper'
+    ) {
+        humanScore++;
+        humanScoreUi.textContent = humanScore;
+        result.style.color = '#006200';
+        return result.textContent = `You WIN! ${humanChoice} beats ${computerChoice}`;
+    } 
 
-    playRound(humanSelection, computerSelection);
+    computerScore++;
+    computerScoreUi.textContent = computerScore;
+    result.style.color = '#c10022';
+    return result.textContent = `You LOSE! ${computerChoice} beats ${humanChoice}`;
 }
 
 const winnerResult = () => {
-    if (humanScore > computerScore) {
-        alert(`You win! Your score: ${humanScore}, Computer score: ${computerScore}`);
-    } else {
-        alert(`You lose! Your score: ${humanScore}, Computer score: ${computerScore}`);
+
+    if (humanScore >= finalScore) {
+        humanScoreUi.style.color = 'white';
+        humanScoreUi.textContent += ' Winner! 🏆';
+        midContainer.style.display = 'none';
+        setTimeout(() => {
+            result.innerHTML = `<div onclick="reset()" class="reset">Reset</div>`
+        }, 2000);
     }
+
+    if (computerScore >= finalScore) {
+        computerScoreUi.style.color = 'white';
+        computerScoreUi.textContent += ' Winner! 🏆';
+        midContainer.style.display = 'none';
+        setTimeout(() => {
+            result.innerHTML = `<div onclick="reset()" class="reset">Reset</div>`
+        }, 2000);
+    }
+
 }
 
-playGame();
-playGame();
-playGame();
-playGame();
-playGame();
-winnerResult();
+const reset = () => {
+    const resetDiv = document.querySelector('.reset');
+    resetDiv.style.display = 'none';
+    humanScore = 0;
+    computerScore = 0;
+    humanScoreUi.textContent = humanScore;
+    computerScoreUi.textContent = computerScore;
+    humanScoreUi.style.color = 'black';
+    computerScoreUi.style.color = 'black';
+    midContainer.style.display = 'flex';
+    return result.textContent = '';
+}
+
+container.addEventListener('click', (e) => {
+    let humanChoice = e.target.textContent;
+
+    switch(humanChoice) {
+        case '🪨':
+            return getHumanChoice('rock');
+        case '📄':
+            return getHumanChoice('paper');
+        case '✂️':
+            return getHumanChoice('scissor');
+    }
+
+})
